@@ -1,6 +1,43 @@
 <template>
   　 <div class="app-container">
         讲师列表
+  <el-form :inline="true"  class="demo-form-inline">
+    <el-form-item label="讲师名">
+      <el-input v-model="teacherQuery.name" placeholder="讲师名"></el-input>
+    </el-form-item>
+
+    <el-form-item label="活动区域">
+      <el-select v-model="teacherQuery.level" placeholder="讲师头衔">
+        <el-option label="高级讲师" value="1"></el-option>
+        <el-option label="首席讲师" value="2"></el-option>
+      </el-select>
+    </el-form-item>
+
+    <el-form-item label="添加时间">
+      <el-date-picker
+        v-model="teacherQuery.begin"
+        type="datetime"
+        placeholder="选择开始时间"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        default-time="00:00:00"
+      />
+    </el-form-item>
+
+    <el-form-item label="结束时间">
+      <el-date-picker
+        v-model="teacherQuery.end"
+        type="datetime"
+        placeholder="选择截止时间"
+        value-format="yyyy-MM-dd HH:mm:ss"
+        default-time="00:00:00"
+      />
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" icon="el-icon-search" @click="getList()">查询</el-button>
+      <el-button type="default"  @click="resetData()">清空</el-button>
+    </el-form-item>
+  </el-form>
   <!-- 表格 -->
   <el-table
     v-loading="listLoading"
@@ -35,7 +72,18 @@
       </template>
     </el-table-column>
   </el-table>
-
+  <!-- 分页 -->
+  <el-pagination
+    @size-change="getList"
+    @current-change="getList"
+    :current-page="page"
+    :page-sizes="[limit, 2*limit, 3*limit, 4*limit]"
+    :page-size="limit"
+    :total="total"
+    style="padding: 30px 0;text-align: center;"
+    layout="total, sizes, prev, pager, next, jumper"
+    >
+  </el-pagination>
 </div>
 </template>
 
@@ -60,7 +108,8 @@ export default {
   },
   methods:{ // 创建具体的方法，调用teacher.js中的方法
     // 讲师列表方法
-    getList(){
+    getList(page = 1){
+      this.page = page;
       teacher.getTeacherListPage(this.page, this.limit, this.teacherQuery)
         .then(response =>{
           this.list = response.data.rows;
@@ -70,6 +119,10 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    resetData(){
+      this.teacherQuery = {}
+      this.getList()
     }
   }
 }

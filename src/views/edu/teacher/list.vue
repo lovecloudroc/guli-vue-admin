@@ -65,7 +65,7 @@
     <el-table-column prop="sort" label="排序" width="60" />
     <el-table-column label="操作" width="200" align="center">
       <template slot-scope="scope">
-        <router-link :to="'/edu/teacher/edit/'+scope.row.id">
+        <router-link :to="'/edu/save/'+scope.row.id">
           <el-button type="primary" size="mini" icon="el-icon-edit">修改</el-button>
         </router-link>
         <el-button type="danger" size="mini" icon="el-icon-delete" @click="removeDataById(scope.row.id)">删除</el-button>
@@ -120,9 +120,27 @@ export default {
           console.log(error)
         })
     },
+    // 清空查询条件
     resetData(){
       this.teacherQuery = {}
       this.getList()
+    },
+    // 删除讲师的方法
+    removeDataById(id){
+        this.$confirm('此操作将永久删除该讲师记录, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          // 调用删除讲师的方法
+          teacher.deleteTeacherById(id)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          // 刷新讲师列表
+          this.getList();
+        })
     }
   }
 }

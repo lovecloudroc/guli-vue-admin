@@ -21,7 +21,7 @@
           :limit="1"
           :action="BASE_API+'/eduservice/subject/addSubject'"
           name="file"
-          accept="application/vnd.ms-excel">
+          accept=".xlsx,.xlm">
           <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
           <el-button
             :loading="loading"

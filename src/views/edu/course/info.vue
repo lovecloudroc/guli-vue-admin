@@ -51,7 +51,6 @@ export default {
           cover:'',
           price:0
         },
-        courseId:''
       }
   },
   created() {
@@ -60,15 +59,15 @@ export default {
     saveOrUpdate() {
       course.addCourseInfo(this.courseInfo)
         .then(response => {
-          this.courseId = response.data.courseId
           // 提示
           this.$message({
             type: 'success',
             message: '添加课程信息成功！'
-          })
-        });
-        // 跳转到第二步骤
-        this.$router.push({path:'/course/chapter/'+this.courseId})
+          });
+          // 跳转到第二步骤
+          this.$router.push({path:'/course/chapter/'+ response.data.courseId})
+        })
+
       }
   }
 }

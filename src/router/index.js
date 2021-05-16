@@ -8,6 +8,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '../views/layout/Layout'
+import id from 'element-ui/src/locale/lang/id'
 
 /**
 * hidden: true                   if `hidden:true` will not show in the sidebar(default is false)
@@ -83,6 +84,48 @@ export const constantRouterMap = [
         name: '课程分类添加',
         component: () => import('@/views/edu/subject/save'),
         meta: { title: '课程分类添加', icon: 'tree' }
+      }
+    ]
+  },
+  {
+    path: '/course',
+    component: Layout,
+    redirect: '/course/table',
+    name: '课程管理',
+    meta: { title: '课程管理', icon: 'example' },
+    children: [
+      {
+        path: 'table',
+        name: '课程列表',
+        component: () => import('@/views/edu/course/list'),
+        meta: { title: '课程分类列表', icon: 'table' }
+      },
+      {
+        path: 'info',
+        name: '课程添加',
+        component: () => import('@/views/edu/course/info'),
+        meta: { title: '课程添加', icon: 'tree' }
+      },
+      {
+        path: 'info/:id',
+        name: 'EduCourseInfoEdit',
+        component: () => import('@/views/edu/course/info'),
+        meta: {title: '编辑课程基本信息',noCache: true},
+        hidden: true
+      },
+      {
+        path: 'chapter/:id',
+        name: 'EduCourseChapterEdit',
+        component: () => import('@/views/edu/course/chapter'),
+        meta: {title: '编辑课程大纲',noCache: true},
+        hidden: true
+      },
+      {
+        path: 'publish/:id',
+        name: 'EduCoursePublishEdit',
+        component: () => import('@/views/edu/course/publish'),
+        meta: {title: '发布课程',noCache: true},
+        hidden: true
       }
     ]
   },

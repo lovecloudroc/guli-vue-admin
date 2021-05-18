@@ -12,8 +12,42 @@
       <el-form-item label="课程标题">
         <el-input v-model="courseInfo.title" placeholder="示例：机器学习项目课：从基础到搭建项目视频课程。专业名称注意大小写"/>
       </el-form-item>
-      <!--  课程讲师 TODO -->
-
+      <!--  所属分类 -->
+      <el-form-item label="课程分类">
+        <el-select
+          v-model="courseInfo.subjectParentId"
+          placeholder="一级分类" @change="subjectLevelOneChanged">
+          <el-option
+            v-for="subject in subjectOneList"
+            :key="subject.id"
+            :label="subject.title"
+            :value="subject.id"
+          />
+        </el-select>
+        <el-select
+          v-model="courseInfo.subjectId"
+          placeholder="二级分类">
+          <el-option
+            v-for="subject in subjectTwoList"
+            :key="subject.id"
+            :label="subject.title"
+            :value="subject.id"
+          />
+        </el-select>
+      </el-form-item>
+      <!--  课程讲师 -->
+      <el-form-item label="课程讲师">
+        <el-select
+          v-model="courseInfo.teacherId"
+          placeholder="请选择">
+          <el-option
+            v-for="teacher in teacherList"
+            :key="teacher.id"
+            :label="teacher.name"
+            :value="teacher.id"
+          />
+        </el-select>
+      </el-form-item>
       <el-form-item label="总课时">
         <el-input-number :min="0" v-model="courseInfo.lessonNum" controls-position="rirght" placehoder="请填写课程的总课时数"/>
       </el-form-item>
@@ -22,7 +56,6 @@
       <el-form-item label="课程简介">
         <el-input v-model="courseInfo.description" placeholder=""/>
       </el-form-item>
-      <!--  所属分类 TODO -->
 
       <!-- 课程封面 TODO -->
       <el-form-item label="课程价格">
@@ -38,24 +71,59 @@
 
 <script>
 import course from '@/api/edu/course'
+import subject from '@/api/edu/subject'
 export default {
   data() {
       return {
         saveBtnDisabled:false ,
         courseInfo:{
           title:'',
-          subjectId:'',
+          subjectId:'', //二级分类id
+          subjectParentId:'', // 一级分类id
           teacherId:'',
           lessonNum:'',
           description:'',
           cover:'',
-          price:0
+          price: 0
         },
+        teacherList: [],
+        subjectOneList: [], // 一级分类
+        subjectTwoList: []  // 二级分类
       }
   },
   created() {
+    // 初始化讲师
+    this.getListTeacher()
+    // 初始化一级分类
+    this.getOneSubject()
   },
   methods:{
+    // 点击某个一级分类，出发change，显示对应的二级分类
+    subjectLevelOneChanged(value) {
+      // value就是一级分类的ID
+      // 遍历所有的分类
+      for (let i = 0 ;i < this.subjectOneList.length ;i++){
+        let oneSubject = this.subjectOneList[i];
+        if (value === oneSubject.id){
+          // 从一级分类中获取所有二级分类
+          this.subjectTwoList = oneSubject.children
+        }
+      }
+    },
+    // 查询所有一级分类
+    getOneSubject() {
+      subject.getSubjectList()
+        .then(response => {
+          this.subjectOneList = response.data.list
+        })
+    },
+    // 查询所有讲师
+    getListTeacher() {
+      course.getListTeacher()
+        .then(response => {
+          this.teacherList = response.data.items
+        })
+    },
     saveOrUpdate() {
       course.addCourseInfo(this.courseInfo)
         .then(response => {

@@ -10,7 +10,9 @@
 
     <el-form label-width="120px">
       <el-form-item label="课程标题">
-        <el-input v-model="courseInfo.title" placeholder="示例：机器学习项目课：从基础到搭建项目视频课程。专业名称注意大小写"/>
+        <el-col :span="12">
+          <el-input v-model="courseInfo.title" placeholder="示例：机器学习项目课：从基础到搭建项目视频课程。专业名称注意大小写"/>
+        </el-col>
       </el-form-item>
       <!--  所属分类 -->
       <el-form-item label="课程分类">
@@ -54,17 +56,30 @@
 
       <!-- 课程简介 TODO -->
       <el-form-item label="课程简介">
-        <el-input v-model="courseInfo.description" placeholder=""/>
+        <el-col :span="16">
+          <el-input v-model="courseInfo.description" placeholder=""/>
+        </el-col>
       </el-form-item>
 
-      <!-- 课程封面 TODO -->
+      <!-- 课程封面 -->
+      <el-form-item label="课程封面">
+        <el-upload
+          :show-file-list="false"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload"
+          :action="BASE_API+'/eduoss/uploadFile'"
+          class="avatar-uploader">
+          <img :src="courseInfo.cover"  width="280" height="360" alt="">
+
+        </el-upload>
+      </el-form-item>
       <el-form-item label="课程价格">
         <el-input-number :min="0" v-model="courseInfo.price" controls-position="rirght" placeholder="免费课程请设置为0"/>
       </el-form-item>
 
-      <el-from-item>
+      <el-form-item>
         <el-button :disabled="saveBtnDisabled" type="primary" @click="saveOrUpdate">保存并下一步</el-button>
-      </el-from-item>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -83,12 +98,14 @@ export default {
           teacherId:'',
           lessonNum:'',
           description:'',
-          cover:'',
+          cover:'https://cloudroc.oss-cn-beijing.aliyuncs.com/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210519180442.png',
           price: 0
         },
+        BASE_API: process.env.BASE_API, // 接口API地址
         teacherList: [],
         subjectOneList: [], // 一级分类
-        subjectTwoList: []  // 二级分类
+        subjectTwoList: [],// 二级分类
+        imageLt: 3,
       }
   },
   created() {
@@ -98,6 +115,24 @@ export default {
     this.getOneSubject()
   },
   methods:{
+    // 上传封面之前调用的方法
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 3
+
+      if (!isJPG) {
+        this.$message.error('上传封面图片只能是 JPG 格式')
+      }
+      if (!isLt2M) {
+        this.$message.error("上传封面图片大小不能超过 "+this.imageLt+"MB")
+      }
+      return isJPG && isLt2M
+    },
+
+    // 上传封面成功后调用的方法
+    handleAvatarSuccess(res,file) {
+      this.courseInfo.cover = res.data.url
+    },
     // 点击某个一级分类，出发change，显示对应的二级分类
     subjectLevelOneChanged(value) {
       // value就是一级分类的ID
@@ -107,6 +142,8 @@ export default {
         if (value === oneSubject.id){
           // 从一级分类中获取所有二级分类
           this.subjectTwoList = oneSubject.children
+          // 将二级分类id值清空一下
+          this.courseInfo.subjectId = ''
         }
       }
     },

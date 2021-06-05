@@ -57,7 +57,8 @@
       <!-- 课程简介 TODO -->
       <el-form-item label="课程简介">
         <el-col :span="16">
-          <el-input v-model="courseInfo.description" placeholder=""/>
+<!--          <el-input v-model="courseInfo.description" placeholder=""/>-->
+          <tinymce :height="300" v-model = "courseInfo.description"/>
         </el-col>
       </el-form-item>
 
@@ -87,7 +88,9 @@
 <script>
 import course from '@/api/edu/course'
 import subject from '@/api/edu/subject'
+import Tinymce from '@/components/Tinymce'
 export default {
+  components: {Tinymce},
   data() {
       return {
         saveBtnDisabled:false ,

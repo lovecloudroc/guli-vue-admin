@@ -51,7 +51,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="总课时">
-        <el-input-number :min="0" v-model="courseInfo.lessonNum" controls-position="rirght" placehoder="请填写课程的总课时数"/>
+        <el-input-number :min="0" v-model="courseInfo.lessonNum" controls-position="right" placehoder="请填写课程的总课时数"/>
       </el-form-item>
 
       <!-- 课程简介 TODO -->

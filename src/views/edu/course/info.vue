@@ -104,6 +104,7 @@ export default {
           cover:'https://cloudroc.oss-cn-beijing.aliyuncs.com/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210519180442.png',
           price: 0
         },
+        courseId:'',
         BASE_API: process.env.BASE_API, // 接口API地址
         teacherList: [],
         subjectOneList: [], // 一级分类
@@ -112,12 +113,25 @@ export default {
       }
   },
   created() {
+    // 获取路由中的courseId
+    if (this.$route.params  && this.$route.params.id){
+      this.courseId = this.$route.params.id;
+      // 调用根据课程id查询课程信息的方法
+      this.getInfo();
+    }
     // 初始化讲师
     this.getListTeacher()
     // 初始化一级分类
     this.getOneSubject()
   },
   methods:{
+    // 获取课程信息根据课程id（进行回显）
+    getInfo() {
+      course.getCourseInfoByid(this.courseId)
+        .then(response => {
+          this.courseInfo = response.data.courseInfoVo
+        })
+    },
     // 上传封面之前调用的方法
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'

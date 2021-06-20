@@ -7,39 +7,44 @@
       <el-step title="创建课程大纲"/>
       <el-step title="最终发布"/>
     </el-steps>
-    <ul class="chapterList">
-      <li v-for="chapter in chapterVideoList" :key="chapter.id">
-        <p>
-          {{chapter.title}}
-          <span class="acts">
+    <el-row>
+      <el-button type="success">添加章节</el-button>
+    </el-row>
+
+    <el-row>
+      <ul class="chapterList">
+        <li v-for="chapter in chapterVideoList" :key="chapter.id">
+          <p>
+            {{chapter.title}}
+            <span class="acts">
             <el-button type="text">添加课时</el-button>
             <el-button type="text" style="">编辑</el-button>
             <el-button type="text">删除</el-button>
           </span>
-        </p>
-        <!--  视频  -->
+          </p>
+          <!--  视频  -->
 
-        <ul class="videoList">
-          <li v-for="video in chapter.children" :key="video.id">
-            <p>
-              {{video.title}}
-              <span class="acts">
+          <ul class="videoList">
+            <li v-for="video in chapter.children" :key="video.id">
+              <p>
+                {{video.title}}
+                <span class="acts">
                 <el-button type="text">编辑</el-button>
                 <el-button type="text">删除</el-button>
               </span>
-            </p>
-          </li>
-        </ul>
+              </p>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </el-row>
 
-      </li>
-    </ul>
-
-    <el-form label-width="120px">
-      <el-from-item>
-        <el-button @click="previous">上一步</el-button>
-        <el-button :disabled="saveBtnDisabled" type="primary" @click="next">下一步</el-button>
-      </el-from-item>
-    </el-form>
+    <el-row>
+        <el-from-item>
+          <el-button @click="previous">上一步</el-button>
+          <el-button :disabled="saveBtnDisabled" type="primary" @click="next">下一步</el-button>
+        </el-from-item>
+    </el-row>
   </div>
 </template>
 
@@ -68,7 +73,9 @@ export default {
     getChapterVideo() {
       chapter.getAllChapterVideo(this.courseId)
         .then(response => {
-          this.chapterVideoList =  response.data.allChapterVo
+          if (response.data.allChapterVo){
+            this.chapterVideoList = response.data.allChapterVo
+          }
         })
     },
     previous() {

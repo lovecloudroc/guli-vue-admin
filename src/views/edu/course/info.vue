@@ -58,7 +58,7 @@
       <el-form-item label="课程简介">
         <el-col :span="16">
 <!--          <el-input v-model="courseInfo.description" placeholder=""/>-->
-          <tinymce :height="300" v-model = "courseInfo.description"/>
+          <tinymce :height="300" v-model = "courseInfo.description" ref="content" id="content"/>
         </el-col>
       </el-form-item>
 
@@ -101,10 +101,11 @@ export default {
           teacherId:'',
           lessonNum:'',
           description:'',
-          cover:'https://cloudroc.oss-cn-beijing.aliyuncs.com/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210519180442.png',
+          cover:'',
           price: 0
         },
         courseId:'',
+        BaseCover:'https://cloudroc.oss-cn-beijing.aliyuncs.com/image/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210519180442.png',
         BASE_API: process.env.BASE_API, // 接口API地址
         teacherList: [],
         subjectOneList: [], // 一级分类
@@ -113,23 +114,53 @@ export default {
       }
   },
   created() {
-    // 获取路由中的courseId
-    if (this.$route.params  && this.$route.params.id){
-      this.courseId = this.$route.params.id;
-      // 调用根据课程id查询课程信息的方法
-      this.getInfo();
+    this.init()
+  },
+  watch: {
+    $route(to,from){
+      this.init()
     }
-    // 初始化讲师
-    this.getListTeacher()
-    // 初始化一级分类
-    this.getOneSubject()
   },
   methods:{
+    // 初始化时进行判断是否刷新页面
+    init() {
+      this.courseInfo.description = null
+      // 初始化讲师
+      this.getListTeacher()
+      // 获取路由中的courseId
+      if (this.$route.params && this.$route.params.id){
+        this.courseId = this.$route.params.id;
+        // 调用根据课程id查询课程信息的方法
+        this.getInfo();
+      } else {
+        this.courseInfo = {}
+        this.courseInfo.price = 0
+        this.courseInfo.cover = this.BaseCover
+
+        // 初始化一级分类
+        this.getOneSubject()
+      }
+    },
     // 获取课程信息根据课程id（进行回显）
     getInfo() {
       course.getCourseInfoByid(this.courseId)
         .then(response => {
           this.courseInfo = response.data.courseInfoVo
+          //1、查询所有的分类，包含一级、二级
+          subject.getSubjectList()
+            .then(response => {
+              // 2、获取所有的一级分类
+              this.subjectOneList =  response.data.list
+
+              // 3、把所有一级分类数组进行遍历
+              for (let i = 0; i < this.subjectOneList.length; i++) {
+                // 获取每一个一级分类
+                let oneSubject = this.subjectOneList[i]
+                if (this.courseInfo.subjectParentId == oneSubject.id){
+                  this.subjectTwoList = oneSubject.children
+                }
+              }
+            })
         })
     },
     // 上传封面之前调用的方法
@@ -178,7 +209,8 @@ export default {
           this.teacherList = response.data.items
         })
     },
-    saveOrUpdate() {
+    // 添加课程信息
+    addCourseInfo() {
       course.addCourseInfo(this.courseInfo)
         .then(response => {
           // 提示
@@ -189,8 +221,29 @@ export default {
           // 跳转到第二步骤
           this.$router.push({path:'/course/chapter/'+ response.data.courseId})
         })
-
+    },
+    // 修改课程信息
+    updateCourseInfo() {
+      course.updateCourseInfoByid(this.courseInfo)
+      .then(response => {
+        // 提示
+        this.$message({
+          type: 'success',
+          message: '修改课程信息成功！'
+        });
+        // 跳转到第二步骤
+        this.$router.push({path:'/course/chapter/'+ this.courseId})
+      })
+    },
+    // 保存并下一步触发的方法
+    saveOrUpdate() {
+      // 通过courseId来判断是进行add添加还是进行update修改操作
+      if (this.courseId){
+        this.updateCourseInfo()
+      }else {
+        this.addCourseInfo()
       }
+    }
   }
 }
 </script>

@@ -106,7 +106,7 @@ export default {
 
     },
     init() {
-      // 判断路径中是都有id值
+      // 判断路径中是否有id值
       if (this.$route.params && this.$route.params.id){
         const id = this.$route.params.id
         // 调用根据id查询讲师的方法

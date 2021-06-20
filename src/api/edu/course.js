@@ -19,7 +19,7 @@ export default {
   // 根据课程id查询课程基本信息
   getCourseInfoByid(courseId) {
     return request({
-      url: `/eduservice/coursegetCourseInfo/${courseId}`,
+      url: `/eduservice/course/getCourseInfo/${courseId}`,
       method:'get'
     })
   },
@@ -27,7 +27,7 @@ export default {
   // 根据课程id查询课程基本信息
   updateCourseInfoByid(courseInfo) {
     return request({
-      url: `/eduservice/updateCourseInfo`,
+      url: `/eduservice/course/updateCourseInfo`,
       method:'post',
       data:courseInfo
     })

@@ -103,7 +103,7 @@ export default {
     return {
       teacher: {
         name: '',
-        sort: 0,
+        sort: '',
         level: 1,
         career: '',
         intro: '',
@@ -148,7 +148,7 @@ export default {
       } else {
         this.teacher = {
           name: '',
-          sort: 0,
+          sort: '',
           level: 1,
           career: '',
           intro: '',

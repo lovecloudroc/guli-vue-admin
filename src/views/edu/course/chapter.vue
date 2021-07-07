@@ -19,7 +19,7 @@
           <p>
             {{ chapter.title }}
             <span class="acts">
-            <el-button type="text" @click="addVideo(chapter.id)">添加课时</el-button>
+            <el-button type="text" @click="openVideo(chapter.id)">添加课时</el-button>
             <el-button type="text" style="" @click="editChapter(chapter.id)">编辑</el-button>
             <el-button type="text" @click="removeChapter(chapter.id)">删除</el-button>
           </span>
@@ -31,8 +31,8 @@
               <p>
                 {{ video.title }}
                 <span class="acts">
-                <el-button type="text">编辑</el-button>
-                <el-button type="text">删除</el-button>
+                <el-button type="text" @click="editVideo(video.id)">编辑</el-button>
+                <el-button type="text" @click="removeVideo(video.id)">删除</el-button>
               </span>
               </p>
             </li>
@@ -95,7 +95,7 @@
         <el-row :gutter="20">
           <el-col :span="16">
             <el-form-item label="是否免费">
-              <el-radio-group v-model="video.free">
+              <el-radio-group v-model="video.isFree">
                 <el-radio :label="true">免费</el-radio>
                 <el-radio :label="false">默认</el-radio>
               </el-radio-group>
@@ -135,7 +135,7 @@ export default {
       video: {
         title: '',
         sort: '',
-        free: false
+        isFree: false
       },
       dialogChapterFormVisible: false, //章节弹框,
       dialogVideoFormVisible: false, // 小节弹窗（课时）
@@ -153,10 +153,88 @@ export default {
   },
   methods: {
 //====================================小节操作====================================
-    // 添加小节弹窗方法
-    addVideo(chapterId) {
+    // 打开小节弹窗方法
+    openVideo(chapterId) {
+      this.video =  {
+         title: '',
+          sort: '',
+        isFree: false
+      }
+      // 弹框
       this.dialogVideoFormVisible = true
-
+      // 设置章节id
+      this.video.chapterId = chapterId
+    },
+    // 添加小节
+    addVideo() {
+      //  设置课程id
+      this.video.courseId = this.courseId
+      video.addVideo(this.video)
+      .then(response => {
+        // 关闭弹框
+        this.dialogVideoFormVisible = false
+        // 提示信息
+        this.$message({
+          type:'success',
+          message:'添加小节成功！'
+        });
+        // 刷新页面
+        this.getChapterVideo()
+      })
+    },
+    // 编辑小节信息
+    editVideo(videoId) {
+      // 打开小节信息弹窗
+      this.dialogVideoFormVisible = true
+      // 根据videoId查询小节信息
+      video.getVideoById(videoId)
+        .then(response => {
+          this.video = response.data.eduVideo
+        })
+    },
+    // 修改小节信息方法
+    updateVideo(){
+      video.updateVideo(this.video)
+      .then(response => {
+        // 关闭弹框
+        this.dialogVideoFormVisible = false
+        // 提示信息
+        this.$message({
+          type:'success',
+          message:'修改小节成功！'
+        });
+        // 刷新页面
+        this.getChapterVideo()
+      })
+    },
+    // 修改或保存小节信息
+    saveOrUpdateVideo() {
+      if (!this.video.id){
+        this.addVideo()
+      }else{
+        this.updateVideo()
+      }
+    },
+    // 删除小节信息
+    removeVideo(videoId){
+      this.$confirm('此操作将删除小节，是否继续？', '提示',{
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {//  点击确认执行then方法
+        // 调用删除api
+        video.deleteVideo(videoId)
+          .then(response => {
+            // 删除成功后
+            // 提示信息
+            this.$message({
+              type: 'success',
+              message: '删除成功！'
+            })
+            // 刷新页面
+            this.getChapterVideo()
+          })
+      })
     },
 //====================================章节操作====================================
     // 删除章节信息

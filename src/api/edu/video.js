@@ -10,6 +10,21 @@ export default {
       data: video
     })
   },
+  // 通过id查询小节信息
+  getVideoById(videoId) {
+    return request({
+      url: '/eduservice/video/getVideoById/'+videoId,
+      method: 'get'
+    })
+  },
+  // 修改小节信息
+  updateVideo(video) {
+    return request({
+      url:'/eduservice/video/updateVideo',
+      method:'put',
+      data:video
+    })
+  },
 
   // 删除小节
   deleteVideo(id) {

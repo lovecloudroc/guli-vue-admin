@@ -5,12 +5,16 @@
       <el-row :gutter="20">
         <el-col :span="8">
           <el-form-item label="讲师名">
-            <el-input v-model="teacherQuery.name" placeholder="讲师名"></el-input>
+            <el-input
+              v-model="teacherQuery.name"
+              placeholder="讲师名"
+              size="small"
+              style="width: 240px"/>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="活动区域">
-            <el-select v-model="teacherQuery.level" placeholder="讲师头衔">
+            <el-select v-model="teacherQuery.level" placeholder="讲师头衔" clearable size="small">
               <el-option label="高级讲师" value="1"></el-option>
               <el-option label="首席讲师" value="2"></el-option>
             </el-select>
@@ -21,6 +25,8 @@
             <el-date-picker
               v-model="teacherQuery.begin"
               type="datetime"
+              size="small"
+              style="width: 240px"
               placeholder="选择开始时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00"
@@ -32,6 +38,8 @@
             <el-date-picker
               v-model="teacherQuery.end"
               type="datetime"
+              size="small"
+              style="width: 240px"
               placeholder="选择截止时间"
               value-format="yyyy-MM-dd HH:mm:ss"
               default-time="00:00:00"

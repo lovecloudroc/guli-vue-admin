@@ -95,10 +95,10 @@ export const constantRouterMap = [
     meta: { title: '课程管理', icon: 'example' },
     children: [
       {
-        path: 'table',
+        path: 'list',
         name: '课程列表',
         component: () => import('@/views/edu/course/list'),
-        meta: { title: '课程分类列表', icon: 'table' }
+        meta: { title: '课程列表', icon: 'table' }
       },
       {
         path: 'info',

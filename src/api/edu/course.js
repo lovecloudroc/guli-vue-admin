@@ -45,5 +45,18 @@ export default {
       url: `/eduservice/course/publishCourse/${courseId}`,
       method: 'post'
     })
+  },
+  getListCourse(){
+    return request({
+      url:'/eduservice/course/getCourseList',
+      method:'get'
+    })
+  },
+  getPageCourseByCondition(current,limit,courseQuery){
+    return request({
+      url:`/eduservice/course/pageCourseCondition/${current}/${limit}`,
+      method:'post',
+      data:courseQuery
+    })
   }
 }
